@@ -1,4 +1,4 @@
-package main
+package convert
 
 import (
 	"bytes"
@@ -16,9 +16,9 @@ func TestExecute(t *testing.T) {
 		path        string
 		contentType string
 	}{
-		{"./test_assets/300.jpg", "image/jpeg"},
-		{"./test_assets/300.png", "image/png"},
-		{"./test_assets/300.gif", "image/gif"},
+		{"../test_assets/300.jpg", "image/jpeg"},
+		{"../test_assets/300.png", "image/png"},
+		{"../test_assets/300.gif", "image/gif"},
 	}
 
 	dsts := []struct {
@@ -56,21 +56,21 @@ func TestExecute(t *testing.T) {
 
 				var buf bytes.Buffer
 
-				input := input{
-					src: struct {
-						contentType string
-						r           io.Reader
+				input := Input{
+					Src: struct {
+						ContentType string
+						R           io.Reader
 					}{src.contentType, file},
-					dst: struct {
-						width       int
-						height      int
-						quality     int
-						contentType string
-						w           io.Writer
+					Dst: struct {
+						Width       int
+						Height      int
+						Quality     int
+						ContentType string
+						W           io.Writer
 					}{dst.width, dst.height, dst.quality, dst.contentType, &buf},
 				}
 
-				if err := execute(&input); err != nil {
+				if err := Execute(&input); err != nil {
 					t.Fatal(err)
 				}
 
