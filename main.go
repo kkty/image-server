@@ -8,7 +8,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/kkty/image-compression/convert"
+	"github.com/kkty/image-server/convert"
 )
 
 func parse(w http.ResponseWriter, r *http.Request) (*convert.Input, error) {
