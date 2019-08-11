@@ -1,10 +1,10 @@
-- This is a simple http server that accepts an image, converts it to a different format, resizes/compresses it and sends it back.
+This is a simple http server that accepts an image, converts it to a different format, resizes/compresses it and sends it back.
 
 ## Usage
 
 ```console
-$ docker build . -t image-compression
-$ docker run -d -p 8080:8080 image-compression
+$ docker pull kkty/image-server
+$ docker run -d -p 8080:8080 kkty/image-server
 ```
 
 ```console
