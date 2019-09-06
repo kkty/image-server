@@ -1,4 +1,5 @@
-FROM golang:1.12
-WORKDIR /go/src/github.com/kkty/image-server
+FROM golang:1.13
+WORKDIR /work
 ADD . .
-CMD ["go", "run", "main.go"]
+RUN go build
+CMD ["./image-server"]
