@@ -7,8 +7,10 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/kkty/image-server/convert"
+	"go.uber.org/zap"
 )
 
 func parse(w http.ResponseWriter, r *http.Request) (*convert.Input, error) {
@@ -69,23 +71,51 @@ func parse(w http.ResponseWriter, r *http.Request) (*convert.Input, error) {
 }
 
 func main() {
+	logger, err := zap.NewProduction()
+
+	if err != nil {
+		log.Fatalf("can't initialize zap logger: %v", err)
+	}
+
+	defer logger.Sync()
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		acceptedAt := time.Now()
+
+		logger := logger.With(
+			zap.String("remote_addr", r.RemoteAddr),
+		)
+
 		input, err := parse(w, r)
 
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
+			logger.Error("error_in_parse", zap.Error(err))
 			return
 		}
 
+		logger = logger.With(
+			zap.String("content_type_src", input.Src.ContentType),
+			zap.String("content_type_dst", input.Dst.ContentType),
+			zap.Int("width", input.Dst.Width),
+			zap.Int("height", input.Dst.Height),
+			zap.Int("quality", input.Dst.Quality),
+		)
+
 		if err := convert.Execute(input); err != nil {
+			logger.Error("error_in_convert", zap.Error(err))
+
 			if err == convert.ErrUnsupportedContentType {
 				w.WriteHeader(http.StatusBadRequest)
 			} else {
 				w.WriteHeader(http.StatusInternalServerError)
 			}
-
-			return
 		}
+
+		logger.Info(
+			"success_convert",
+			zap.Duration("elapsed", time.Now().Sub(acceptedAt)),
+		)
 	})
 
 	port := os.Getenv("PORT")
