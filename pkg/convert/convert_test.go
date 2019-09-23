@@ -6,19 +6,18 @@ import (
 	"image/gif"
 	"image/jpeg"
 	"image/png"
-	"io"
 	"os"
 	"testing"
 )
 
-func TestExecute(t *testing.T) {
+func TestConvert(t *testing.T) {
 	srcs := []struct {
 		path        string
 		contentType string
 	}{
-		{"../test_assets/300.jpg", "image/jpeg"},
-		{"../test_assets/300.png", "image/png"},
-		{"../test_assets/300.gif", "image/gif"},
+		{"../../test/300.jpg", "image/jpeg"},
+		{"../../test/300.png", "image/png"},
+		{"../../test/300.gif", "image/gif"},
 	}
 
 	dsts := []struct {
@@ -56,21 +55,15 @@ func TestExecute(t *testing.T) {
 
 				var buf bytes.Buffer
 
-				input := Input{
-					Src: struct {
-						ContentType string
-						R           io.Reader
-					}{src.contentType, file},
-					Dst: struct {
-						Width       int
-						Height      int
-						Quality     int
-						ContentType string
-						W           io.Writer
-					}{dst.width, dst.height, dst.quality, dst.contentType, &buf},
+				config := Config{
+					ContentTypeFrom: src.contentType,
+					ContentTypeTo:   dst.contentType,
+					Width:           dst.width,
+					Height:          dst.height,
+					Quality:         dst.quality,
 				}
 
-				if err := Execute(&input); err != nil {
+				if err := Convert(&config, file, &buf); err != nil {
 					t.Fatal(err)
 				}
 
