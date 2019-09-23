@@ -16,4 +16,9 @@ jobs:
       uses: actions/checkout@v1
 
     - name: Test
-      run: go test ./pkg/...
+      run: go test ./pkg/... -coverprofile=coverage.txt
+
+    - name: Codecov
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      run: bash <(curl -s https://codecov.io/bash)

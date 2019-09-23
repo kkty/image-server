@@ -1,4 +1,6 @@
-This is a simple http server that accepts an image, converts it to a different format, resizes/compresses it and sends it back.
+image-server is a simple http server that accepts an image, converts it to a different format, resizes/compresses it and sends it back.
+
+[![codecov](https://codecov.io/gh/kkty/image-server/branch/master/graph/badge.svg)](https://codecov.io/gh/kkty/image-server)
 
 ## Run on CloudRun
 
